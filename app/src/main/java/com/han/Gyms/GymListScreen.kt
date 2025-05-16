@@ -13,14 +13,17 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.auth.ktx.auth
 import android.util.Log
 
-
 @Composable
-fun GymListScreen(onLogout: () -> Unit = {}) {
+fun GymListScreen(
+    onLogout: () -> Unit,
+    onMapClick: () -> Unit,
+    gymList: List<Gym>,
+    onGymListLoaded: (List<Gym>) -> Unit
+) {
     val db = Firebase.firestore
-    var gymList by remember { mutableStateOf(listOf<Gym>()) }
     var showDialog by remember { mutableStateOf(false) }
 
-    // Load gyms from Firestore
+    // Load gyms from Firestore and pass back to parent
     DisposableEffect(Unit) {
         val listener = db.collection("Gyms")
             .addSnapshotListener { snapshots, error ->
@@ -30,7 +33,7 @@ fun GymListScreen(onLogout: () -> Unit = {}) {
                 }
                 if (snapshots != null) {
                     val gyms = snapshots.mapNotNull { it.toObject(Gym::class.java) }
-                    gymList = gyms
+                    onGymListLoaded(gyms)
                 }
             }
 
@@ -44,24 +47,42 @@ fun GymListScreen(onLogout: () -> Unit = {}) {
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        Button(
-            onClick = {
-                Firebase.auth.signOut()
-                onLogout()
-            },
-            modifier = Modifier.align(Alignment.End)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 32.dp, bottom = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Text("Logout")
-        }
+            Button(
+                onClick = { showDialog = true },
+                modifier = Modifier.weight(1f)
+            ) {
+                Text("Add Gym")
+            }
 
-        Button(onClick = { showDialog = true }) {
-            Text("Add Gym")
+            Button(
+                onClick = { onMapClick() },
+                modifier = Modifier.weight(1f)
+            ) {
+                Text("Map View")
+            }
+
+            Button(
+                onClick = {
+                    Firebase.auth.signOut()
+                    onLogout()
+                },
+                modifier = Modifier.weight(1f),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+            ) {
+                Text("Logout")
+            }
         }
 
         Text(
             text = "Available Gyms",
             style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.padding(bottom = 16.dp)
+            modifier = Modifier.padding(vertical = 16.dp)
         )
 
         LazyColumn(

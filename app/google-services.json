@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "695481633327",
-    "project_id": "gyms-c1195",
-    "storage_bucket": "gyms-c1195.firebasestorage.app"
+    "project_number": "987504552580",
+    "project_id": "gyms-d8557",
+    "storage_bucket": "gyms-d8557.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:695481633327:android:9b1d46173269a22b6f94da",
+        "mobilesdk_app_id": "1:987504552580:android:9a1f27d8d437c3f0fa70d1",
         "android_client_info": {
           "package_name": "com.han.Gyms"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyASfEGo61a5CpVaKXQh0PQw4tfZPdbt-FA"
+          "current_key": "AIzaSyD_tduYgrkMZQN3CvUTsUSPzbCZ8tWnOxM"
         }
       ],
       "services": {

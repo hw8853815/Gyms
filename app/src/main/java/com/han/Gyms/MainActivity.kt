@@ -9,6 +9,10 @@ import com.han.Gyms.ui.theme.GymsTheme
 import androidx.compose.runtime.*
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -16,7 +20,6 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             GymsTheme {
-                Firebase.auth.signOut()
                 AppRoot()
             }
         }
@@ -25,16 +28,32 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun AppRoot() {
+    val navController: NavHostController = rememberNavController()
     val auth = Firebase.auth
     var isLoggedIn by remember { mutableStateOf(auth.currentUser != null) }
+    var gymList by remember { mutableStateOf(listOf<Gym>()) }
 
-    if (isLoggedIn) {
-        GymListScreen(onLogout = {
-            isLoggedIn = false
-        })
+    if (!isLoggedIn) {
+        LoginScreen(onLoginSuccess = { isLoggedIn = true })
     } else {
-        LoginScreen(onLoginSuccess = {
-            isLoggedIn = true
-        })
+        NavHost(navController = navController, startDestination = "gymList") {
+            composable("gymList") {
+                GymListScreen(
+                    onLogout = {
+                        Firebase.auth.signOut()
+                        isLoggedIn = false
+                    },
+                    onMapClick = { navController.navigate("map") },
+                    gymList = gymList,
+                    onGymListLoaded = { gymList = it }
+                )
+            }
+            composable("map") {
+                GymMapScreen(
+                    gymList = gymList,
+                    onBack = { navController.popBackStack() }
+                )
+            }
+        }
     }
 }
