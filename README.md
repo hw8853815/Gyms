@@ -16,6 +16,7 @@ A mobile application for searching, viewing, posting, and commenting on gyms, bu
 ![59e24bdac1dff167a970ee9d792c020](https://github.com/user-attachments/assets/b11a1d71-47e7-46b9-bb99-3dd7859af3c5)
 ![d4e2bb30a776c380358f6129fd0a70f](https://github.com/user-attachments/assets/29503702-6772-4b1b-a38c-71033b61b66c)
 ![4e39fea1b98a421c84af4c5501ab41b](https://github.com/user-attachments/assets/931d0d3b-5ff6-4e0a-9df0-a76c7954786c)
+![970ea7f80741407ea5929cc0d90079b](https://github.com/user-attachments/assets/39645ce3-0632-4210-ab01-1c60387538e0)
 
 
 
@@ -26,6 +27,7 @@ A mobile application for searching, viewing, posting, and commenting on gyms, bu
 - Firebase Authentication
 - Firebase Firestore (Cloud Database)
 - Firebase Storage (Image uploads, if used)
+
 - Coil (Image loading)
 - Coroutines
 
