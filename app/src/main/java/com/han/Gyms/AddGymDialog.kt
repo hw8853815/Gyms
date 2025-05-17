@@ -66,10 +66,17 @@ fun AddGymDialog(onDismiss: () -> Unit, onSuccess: () -> Unit) {
                                     val lng = results[0].longitude
                                     val geoPoint = GeoPoint(lat, lng)
 
-                                    val gym = Gym(name, address, imageUrl, uid, geoPoint)
+                                    val gym = Gym(
+                                        name = name,
+                                        address = address,
+                                        imageUrl = imageUrl,
+                                        addedBy = uid,
+                                        location = geoPoint
+                                    )
                                     db.collection("Gyms")
                                         .add(gym)
-                                        .addOnSuccessListener {
+                                        .addOnSuccessListener { docRef ->
+                                            docRef.update("id", docRef.id)
                                             Toast.makeText(context, "Gym added!", Toast.LENGTH_SHORT).show()
                                             onSuccess()
                                         }

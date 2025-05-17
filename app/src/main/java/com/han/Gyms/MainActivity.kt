@@ -32,6 +32,7 @@ fun AppRoot() {
     val auth = Firebase.auth
     var isLoggedIn by remember { mutableStateOf(auth.currentUser != null) }
     var gymList by remember { mutableStateOf(listOf<Gym>()) }
+    var gymsForMap by remember { mutableStateOf(listOf<Gym>()) }
 
     if (!isLoggedIn) {
         LoginScreen(onLoginSuccess = { isLoggedIn = true })
@@ -43,14 +44,25 @@ fun AppRoot() {
                         Firebase.auth.signOut()
                         isLoggedIn = false
                     },
-                    onMapClick = { navController.navigate("map") },
+                    onMapClick = { gymsToShow ->
+                        gymsForMap = gymsToShow
+                        navController.navigate("map")
+                    },
+                    onGymClick = { gymId -> navController.navigate("gymDetail/$gymId") },
                     gymList = gymList,
                     onGymListLoaded = { gymList = it }
                 )
             }
             composable("map") {
                 GymMapScreen(
-                    gymList = gymList,
+                    gymList = gymsForMap,
+                    onBack = { navController.popBackStack() }
+                )
+            }
+            composable("gymDetail/{gymId}") { backStackEntry ->
+                val gymId = backStackEntry.arguments?.getString("gymId") ?: return@composable
+                GymDetailScreen(
+                    gymId = gymId,
                     onBack = { navController.popBackStack() }
                 )
             }

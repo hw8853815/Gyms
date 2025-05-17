@@ -12,16 +12,22 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.auth.ktx.auth
 import android.util.Log
+import androidx.compose.foundation.clickable
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.ui.text.input.TextFieldValue
 
 @Composable
 fun GymListScreen(
     onLogout: () -> Unit,
-    onMapClick: () -> Unit,
+    onMapClick: (List<Gym>) -> Unit,
     gymList: List<Gym>,
-    onGymListLoaded: (List<Gym>) -> Unit
+    onGymListLoaded: (List<Gym>) -> Unit,
+    onGymClick: (String) -> Unit
 ) {
     val db = Firebase.firestore
     var showDialog by remember { mutableStateOf(false) }
+    var searchQuery by remember { mutableStateOf(TextFieldValue("")) }
 
     // Load gyms from Firestore and pass back to parent
     DisposableEffect(Unit) {
@@ -32,13 +38,24 @@ fun GymListScreen(
                     return@addSnapshotListener
                 }
                 if (snapshots != null) {
-                    val gyms = snapshots.mapNotNull { it.toObject(Gym::class.java) }
+                    val gyms = snapshots?.documents?.mapNotNull { doc ->
+                        val gym = doc.toObject(Gym::class.java)
+                        gym?.copy(id = doc.id)
+                    } ?: emptyList()
                     onGymListLoaded(gyms)
                 }
             }
 
         onDispose {
             listener.remove()
+        }
+    }
+
+    val filteredGyms = remember(searchQuery.text, gymList) {
+        if (searchQuery.text.isBlank()) gymList
+        else gymList.filter {
+            it.name.contains(searchQuery.text, ignoreCase = true)
+                    || it.address.contains(searchQuery.text, ignoreCase = true)
         }
     }
 
@@ -57,11 +74,11 @@ fun GymListScreen(
                 onClick = { showDialog = true },
                 modifier = Modifier.weight(1f)
             ) {
-                Text("Add Gym")
+                Text("Post Gym")
             }
 
             Button(
-                onClick = { onMapClick() },
+                onClick = { onMapClick(gymList) },
                 modifier = Modifier.weight(1f)
             ) {
                 Text("Map View")
@@ -86,11 +103,14 @@ fun GymListScreen(
         )
 
         LazyColumn(
+            modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(gymList) { gym ->
+            items(filteredGyms) { gym ->
                 Card(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { onGymClick(gym.id) },
                     elevation = CardDefaults.cardElevation(4.dp)
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
@@ -98,6 +118,30 @@ fun GymListScreen(
                         Text(text = gym.address, style = MaterialTheme.typography.bodyMedium)
                     }
                 }
+            }
+        }
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 12.dp, bottom = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            OutlinedTextField(
+                value = searchQuery,
+                onValueChange = { searchQuery = it },
+                placeholder = { Text("Search by name or address") },
+                modifier = Modifier.weight(1f),
+                singleLine = true,
+                leadingIcon = {
+                    Icon(Icons.Default.Search, contentDescription = null)
+                }
+            )
+            Button(
+                onClick = { onMapClick(filteredGyms) },
+                modifier = Modifier.padding(start = 8.dp)
+            ) {
+                Text("Show On Map")
             }
         }
     }

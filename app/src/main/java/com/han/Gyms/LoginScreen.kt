@@ -12,6 +12,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import android.widget.Toast
+import com.google.firebase.firestore.ktx.firestore
 
 @Composable
 fun LoginScreen(
@@ -20,6 +21,7 @@ fun LoginScreen(
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var userName by remember { mutableStateOf("") }
     val context = LocalContext.current
 
     Column(
@@ -29,6 +31,13 @@ fun LoginScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        OutlinedTextField(
+            value = userName,
+            onValueChange = { userName = it },
+            label = { Text("Username") },
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
@@ -44,9 +53,22 @@ fun LoginScreen(
 
         Button(
             onClick = {
+                if (userName.isBlank()) {
+                    Toast.makeText(context, "Username cannot be empty", Toast.LENGTH_SHORT).show()
+                    return@Button
+                }
                 auth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
+                            val uid = auth.currentUser?.uid
+                            val db = Firebase.firestore
+                            val user = hashMapOf(
+                                "name" to userName,
+                                "email" to email
+                            )
+                            if (uid != null) {
+                                db.collection("Users").document(uid).set(user)
+                            }
                             Toast.makeText(context, "Registration successful!", Toast.LENGTH_SHORT).show()
                         } else {
                             Toast.makeText(context, "Registration failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()

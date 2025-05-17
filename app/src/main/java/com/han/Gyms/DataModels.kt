@@ -9,6 +9,7 @@ data class User(
 )
 
 data class Gym(
+    val id: String = "",
     val name: String = "",
     val address: String = "",
     val imageUrl: String = "",
@@ -20,6 +21,7 @@ data class Comment(
     val gymId: String = "",
     val userId: String = "",
     val content: String = "",
+    val userName: String = "",
     val timestamp: Timestamp = Timestamp.now()
 )
 
