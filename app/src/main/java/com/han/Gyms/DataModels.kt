@@ -24,10 +24,3 @@ data class Comment(
     val userName: String = "",
     val timestamp: Timestamp = Timestamp.now()
 )
-
-data class Reply(
-    val commentId: String = "",
-    val userId: String = "",
-    val content: String = "",
-    val timestamp: Timestamp = Timestamp.now()
-)

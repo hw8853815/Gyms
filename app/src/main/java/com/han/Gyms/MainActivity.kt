@@ -54,7 +54,7 @@ fun AppRoot() {
                 )
             }
             composable("map") {
-                GymMapScreen(
+                MapScreen(
                     gymList = gymsForMap,
                     onBack = { navController.popBackStack() }
                 )

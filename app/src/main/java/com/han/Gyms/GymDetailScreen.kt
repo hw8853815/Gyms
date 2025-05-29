@@ -15,8 +15,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.testTag
 import coil.compose.rememberAsyncImagePainter
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.auth.ktx.auth
@@ -69,7 +69,7 @@ fun GymDetailScreen(gymId: String, onBack: () -> Unit = {}) {
     }
 
     Box(modifier = Modifier
-        .fillMaxSize()) {
+        .fillMaxSize().testTag("page_gym_detail")) {
 
         IconButton(
             onClick = { onBack() },
@@ -203,7 +203,7 @@ fun GymDetailScreen(gymId: String, onBack: () -> Unit = {}) {
                     value = newComment,
                     onValueChange = { newComment = it },
                     label = { Text("Add a comment") },
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f).testTag("input_comment")
                 )
                 Button(
                     onClick = {
@@ -228,7 +228,7 @@ fun GymDetailScreen(gymId: String, onBack: () -> Unit = {}) {
                             Toast.makeText(context, "Please enter a comment", Toast.LENGTH_SHORT).show()
                         }
                     },
-                    modifier = Modifier.padding(start = 8.dp)
+                    modifier = Modifier.padding(start = 8.dp).testTag("btn_send")
                 ) {
                     Text("Send")
                 }

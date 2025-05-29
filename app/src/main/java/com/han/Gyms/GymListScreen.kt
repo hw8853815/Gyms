@@ -8,6 +8,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.testTag
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.auth.ktx.auth
@@ -63,6 +64,7 @@ fun GymListScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
+            .testTag("page_gym_list")
     ) {
         Row(
             modifier = Modifier
@@ -72,14 +74,14 @@ fun GymListScreen(
         ) {
             Button(
                 onClick = { showDialog = true },
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f).testTag("btn_post_gym")
             ) {
                 Text("Post Gym")
             }
 
             Button(
                 onClick = { onMapClick(gymList) },
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f).testTag("btn_map_view")
             ) {
                 Text("Map View")
             }
@@ -89,7 +91,7 @@ fun GymListScreen(
                     Firebase.auth.signOut()
                     onLogout()
                 },
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(1f).testTag("btn_logout"),
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
             ) {
                 Text("Logout")
@@ -110,7 +112,8 @@ fun GymListScreen(
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { onGymClick(gym.id) },
+                        .clickable { onGymClick(gym.id) }
+                        .testTag("gym_card_${gym.id}"),
                     elevation = CardDefaults.cardElevation(4.dp)
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
@@ -131,7 +134,7 @@ fun GymListScreen(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
                 placeholder = { Text("Search by name or address") },
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(1f).testTag("input_search"),
                 singleLine = true,
                 leadingIcon = {
                     Icon(Icons.Default.Search, contentDescription = null)
@@ -139,7 +142,7 @@ fun GymListScreen(
             )
             Button(
                 onClick = { onMapClick(filteredGyms) },
-                modifier = Modifier.padding(start = 8.dp)
+                modifier = Modifier.padding(start = 8.dp).testTag("btn_show_on_map")
             ) {
                 Text("Show On Map")
             }
@@ -151,7 +154,8 @@ fun GymListScreen(
             onDismiss = { showDialog = false },
             onSuccess = {
                 showDialog = false
-            }
+            },
+            uid = Firebase.auth.currentUser?.uid ?: ""
         )
     }
 }

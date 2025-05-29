@@ -10,17 +10,18 @@ import androidx.compose.material3.*
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 
 @Composable
-fun GymMapScreen(gymList: List<Gym>, onBack: () -> Unit = {}) {
+fun MapScreen(gymList: List<Gym>, onBack: () -> Unit = {}) {
     val defaultLocation = LatLng(-27.4705, 153.0260)
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(defaultLocation, 12f)
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize().testTag("page_map")) {
 
         GoogleMap(
             modifier = Modifier.fillMaxSize().padding(WindowInsets.statusBars.asPaddingValues()),
@@ -42,6 +43,7 @@ fun GymMapScreen(gymList: List<Gym>, onBack: () -> Unit = {}) {
             modifier = Modifier
                 .padding(top = 32.dp, start = 16.dp)
                 .align(Alignment.TopStart)
+                .testTag("btn_back")
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
