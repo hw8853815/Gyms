@@ -75,6 +75,7 @@ Gyms/
 ## Contribution & Version Control
 
 - All commits follow sprint-based workflow:
+  - Sprint 1: Implemented user authentication (login & registration), developed basic gym listing and posting functionality 
   - Sprint 2: Integrated Google Map API, added map view.
   - Sprint 3: Added gym detail page, comment feature, and search.
 - Project managed via Trello (see board for sprints/tasks)
